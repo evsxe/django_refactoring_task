@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Update Task</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" value="{{ task.title }}"><br><br>
+
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description">{{ task.description }}</textarea><br><br>
+
+        <label for="assigned_to">Assign to:</label><br>
+        <select id="assigned_to" name="assigned_to">
+            {% for user in users %}
+                <option value="{{ user.id }}" {% if user == task.assigned_to %}selected{% endif %}>{{ user.username }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="due_date">Due Date:</label><br>
+        <input type="date" id="due_date" name="due_date" value="{{ task.due_date|date:'Y-m-d' }}"><br><br>
+
+        <label for="status">Status:</label><br>
+        <select id="status" name="status">
+            {% for key, value in task.STATUS_CHOICES %}
+                <option value="{{ key }}" {% if key == task.status %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <input type="submit" value="Update">
+    </form>
+{% endblock %}
