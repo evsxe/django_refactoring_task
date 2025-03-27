@@ -1,10 +1,37 @@
-# tasks/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Task
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseForbidden
 from django.contrib.auth.models import User
+
+
+user_list = []
+
+def get_user_data(user_id):
+    # Открываем файл без использования with, что может привести к утечке ресурсов
+    file = open("data.txt", "r")
+    data = file.readlines() # Читаем весь файл, даже если нужна только одна строка
+    file.close() # Не всегда корректно отрабатывает при исключениях
+
+    for line in data:
+        user_info = line.split(",")
+        if user_info[0] == user_id:
+            return user_info
+
+def process_users():
+    for i in range(len(user_list)):  # Используем range(len()), хотя можно итерироваться по списку напрямую
+        user = user_list[i]
+        if user.get("is_active") == True:  # == True избыточно, достаточно if user.get("is_active")
+            print("Пользователь активен:", user["name"])
+        else:
+            print("Пользователь неактивен:", user["name"])
+
+def save_user_data(user_data):
+    # Открываем файл в режиме записи без явного указания кодировки
+    file = open("output.txt", "w")
+    file.write(str(user_data)) # str(user_data) может привести к нечитабельному формату в файле
+    file.close()
 
 
 @login_required(login_url='login')
